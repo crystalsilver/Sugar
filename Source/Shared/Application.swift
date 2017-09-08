@@ -5,49 +5,41 @@
 #endif
 
 public struct Application {
-
-  fileprivate static func getString(_ key: String) -> String {
-    guard let infoDictionary = Bundle.main.infoDictionary,
-      let value = infoDictionary[key] as? String
-      else { return "" }
-
-    return value
-  }
-
   public static var name: String = {
-    let displayName = Application.getString("CFBundleDisplayName")
-
-    return !displayName.isEmpty ? displayName : Application.getString("CFBundleName")
+    return !displayName.isEmpty ? displayName : bundleName
   }()
 
-  public static var version: String = {
-    return Application.getString("CFBundleShortVersionString")
-  }()
-
-  public static var build: String = {
-    return Application.getString("CFBundleVersion")
-  }()
-
-  public static var executable: String = {
-    return Application.getString("CFBundleExecutable")
-  }()
-
-  public static var bundle: String = {
-    return Application.getString("CFBundleIdentifier")
-  }()
+  public static var versionNumber: String = Application.getString("CFBundleShortVersionString")
+  public static var buildNumber: String = Application.getString("CFBundleVersion")
+  public static var executableName: String = Application.getString("CFBundleExecutable")
+  public static var bundleId: String = Application.getString("CFBundleIdentifier")
 
   public static var schemes: [String] = {
     guard let infoDictionary = Bundle.main.infoDictionary,
-      let urlTypes = infoDictionary["CFBundleURLTypes"] as? [AnyObject],
-      let urlType = urlTypes.first as? [String : AnyObject],
+      let urlTypes = infoDictionary["CFBundleURLTypes"] as? JSONArray,
+      let urlType = urlTypes.first,
       let urlSchemes = urlType["CFBundleURLSchemes"] as? [String]
-      else { return [] }
+      else {
+        return []
+    }
 
     return urlSchemes
   }()
 
-  public static var mainScheme: String? = {
-    return schemes.first
-  }()
+  public static var mainScheme: String? = schemes.first
 
+  // MARK: - Helper
+
+  private static var displayName: String = Application.getString("CFBundleDisplayName")
+  private static var bundleName: String = Application.getString("CFBundleName")
+
+  private static func getString(_ key: String) -> String {
+    guard let infoDictionary = Bundle.main.infoDictionary,
+      let value = infoDictionary[key] as? String
+      else {
+        return ""
+    }
+
+    return value
+  }
 }
