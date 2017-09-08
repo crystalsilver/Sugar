@@ -11,13 +11,17 @@ public struct Swizzler {
     let originalSelector = Selector(method)
     let swizzledSelector = Selector("\(prefix)_\(method)")
 
-    let originalMethod = kind == .instance
+    guard let originalMethod = kind == .instance
       ? class_getInstanceMethod(cls, originalSelector)
-      : class_getClassMethod(cls, originalSelector)
+      : class_getClassMethod(cls, originalSelector) else {
+        return
+    }
 
-    let swizzledMethod = kind == .instance
+    guard let swizzledMethod = kind == .instance
       ? class_getInstanceMethod(cls, swizzledSelector)
-      : class_getClassMethod(cls, swizzledSelector)
+      : class_getClassMethod(cls, swizzledSelector) else {
+        return
+    }
 
     let didAddMethod = class_addMethod(cls, originalSelector,
       method_getImplementation(swizzledMethod),

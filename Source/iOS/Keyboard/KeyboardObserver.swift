@@ -28,14 +28,18 @@ open class KeyboardObserver: NSObject {
 
   // MARK: - Handling
 
-  func handleKeyboardWillShow(_ notification: Notification) {
-    guard let info = KeyboardInfo(notification: notification) else { return }
+  @objc func handleKeyboardWillShow(_ notification: Notification) {
+    guard let info = KeyboardInfo(notification: notification) else {
+      return
+    }
 
     self.handler.willShow(info)
   }
 
-  func handleKeyboardWillHide(_ notification: Notification) {
-    guard let info = KeyboardInfo(notification: notification) else { return }
+  @objc func handleKeyboardWillHide(_ notification: Notification) {
+    guard let info = KeyboardInfo(notification: notification) else {
+      return
+    }
 
     self.handler.willHide(info)
   }
